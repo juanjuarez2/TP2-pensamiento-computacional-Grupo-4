@@ -1,0 +1,85 @@
+CLASE Recurso:
+    ATRIBUTOS:
+        id_recurso: entero
+        nombre: cadena
+        tipo: cadena  // "persona" o "material"
+        disponible: booleano = verdadero
+        cantidad_disponible: entero
+
+CLASE AsignacionRecursos:
+    ATRIBUTOS:
+        recursos_disponibles: lista de Recurso
+        asignaciones: diccionario  // {id_tarea: [lista_recursos]}
+
+    FUNCIÓN registrar_recurso(nombre, tipo, cantidad):
+        // Validaciones
+        SI nombre ES vacío:
+            RETORNAR "Error: Nombre de recurso inválido"
+        
+        SI tipo no está EN ["persona", "material"]:
+            RETORNAR "Error: Tipo debe ser 'persona' o 'material'"
+        
+        SI cantidad <= 0:
+            RETORNAR "Error: Cantidad debe ser mayor a 0"
+
+        nuevo_recurso = Recurso()
+        nuevo_recurso.nombre = nombre
+        nuevo_recurso.tipo = tipo
+        nuevo_recurso.cantidad_disponible = cantidad
+        
+        recursos_disponibles.agregar(nuevo_recurso)
+        RETORNAR "Recurso registrado exitosamente"
+
+    FUNCIÓN asignar_recurso_a_tarea(id_tarea, nombre_recurso, cantidad_necesaria):
+        // Validar que la tarea existe
+        SI id_tarea no es entero O id_tarea <= 0
+  RETORNAR "Error: ID de tarea inválido"
+
+        // Buscar recurso disponible
+        recurso_encontrado = NULO
+        PARA CADA recurso EN recursos_disponibles:
+            SI recurso.nombre == nombre_recurso:
+                recurso_encontrado = recurso
+                ROMPER
+
+        SI recurso_encontrado ES NULO:
+            RETORNAR "Error: Recurso no encontrado"
+
+        // Verificar disponibilidad
+        SI recurso_encontrado.cantidad_disponible < cantidad_necesaria:
+            RETORNAR "Error: Cantidad insuficiente de recurso"
+
+        // Realizar asignación
+        SI id_tarea no está EN asignaciones:
+            asignaciones[id_tarea] = []
+
+        asignacion = {
+            "recurso": nombre_recurso,
+            "cantidad": cantidad_necesaria,
+            "tipo": recurso_encontrado.tipo
+        }
+
+        asignaciones[id_tarea].agregar(asignacion)
+        recurso_encontrado.cantidad_disponible -= cantidad_necesaria
+
+        RETORNAR "Recurso asignado exitosamente"
+
+    FUNCIÓN obtener_asignaciones_tarea(id_tarea):
+        SI id_tarea EN asignaciones:
+RETORNAR asignaciones[id_tarea]
+        SINO:
+            RETORNAR []
+
+    FUNCIÓN liberar_recursos_tarea(id_tarea):
+        SI id_tarea EN asignaciones:
+            PARA CADA asignacion EN asignaciones[id_tarea]:
+                // Devolver recursos al pool disponible
+                PARA CADA recurso EN recursos_disponibles:
+                    SI recurso.nombre == asignacion["recurso"]:
+                        recurso.cantidad_disponible += asignacion["cantidad"]
+            
+            // Limpiar asignaciones
+            asignaciones[id_tarea] = []
+            RETORNAR "Recursos liberados exitosamente"
+        SINO:
+            RETORNAR "Error: No hay asignaciones para esta tarea"
