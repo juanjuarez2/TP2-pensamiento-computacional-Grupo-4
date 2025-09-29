@@ -1,0 +1,103 @@
+CLASE RegistroProgreso:
+    ATRIBUTOS:
+        id_tarea: entero
+        fecha_actualizacion: fecha
+        horas_trabajadas: flotante
+        estado_anterior: cadena
+        estado_nuevo: cadena
+        observaciones: cadena
+
+CLASE MonitoreoEjecucion:
+    ATRIBUTOS:
+        estados_validos: lista = ["planificada", "en_progreso", "pausada", "completada"]
+        historial_cambios: lista de RegistroProgreso
+
+    FUNCION actualizar_estado_tarea(planificador, id_tarea, nuevo_estado, horas_trabajadas, observaciones):
+        // Validaciones de entrada
+        SI id_tarea no es entero O id_tarea <= 0:
+            RETORNAR "Error: ID de tarea inválido"
+
+        SI nuevo_estado no está EN estados_validos:
+            RETORNAR "Error: Estado inválido. Use: planificada, en_progreso, pausada, completada"
+
+        SI horas_trabajadas < 0:
+            RETORNAR "Error: Horas trabajadas no puede ser negativo"
+
+        // Buscar tarea
+        tarea = planificador.buscar_tarea_por_id(id_tarea)
+        SI tarea ES NULO:
+            RETORNAR "Error: Tarea no encontrada"
+
+        // Validar transiciOn de estado
+        SI no es_transicion_valida(tarea.estado, nuevo_estado):
+            RETORNAR "Error: TransiciOn de estado inválida"
+
+        // Registrar cambio
+        registro = RegistroProgreso()
+        registro.id_tarea = id_tarea
+        registro.fecha_actualizacion = fecha_actual()
+        registro.horas_trabajadas = horas_trabajadas
+        registro.estado_anterior = tarea.estado
+        registro.estado_nuevo = nuevo_estado
+        registro.observaciones = observaciones
+
+        historial_cambios.agregar(registro)
+
+        // Actualizar tarea
+        tarea.estado = nuevo_estado
+        
+        RETORNAR "Estado actualizado exitosamente"
+
+    FUNCION es_transicion_valida(estado_actual, estado_nuevo):
+        transiciones_permitidas = {
+            "planificada": ["en_progreso"],
+            "en_progreso": ["pausada", "completada"],
+            "pausada": ["en_progreso", "completada"],
+            "completada": []  // Estado final
+        }
+
+        SI estado_actual EN transiciones_permitidas:
+            RETORNAR estado_nuevo EN transiciones_permitidas[estado_actual]
+        SINO:
+            RETORNAR falso
+
+    FUNCION obtener_tareas_por_estado(planificador, estado):
+        SI estado no está EN estados_validos:
+            RETORNAR "Error: Estado inválido"
+
+        tareas_filtradas = []
+        PARA CADA tarea EN planificador.obtener_plan_completo():
+            SI tarea.estado == estado:
+                tareas_filtradas.agregar(tarea)
+
+        RETORNAR tareas_filtradas
+
+    FUNCION obtener_progreso_tarea(id_tarea):
+        registros_tarea = []
+        PARA CADA registro EN historial_cambios:
+            SI registro.id_tarea == id_tarea:
+                registros_tarea.agregar(registro)
+
+        RETORNAR registros_tarea
+
+    FUNCION calcular_horas_trabajadas_tarea(id_tarea):
+        total_horas = 0.0
+        PARA CADA registro EN historial_cambios:
+            SI registro.id_tarea == id_tarea:
+                total_horas += registro.horas_trabajadas
+
+        RETORNAR total_horas
+
+    FUNCION generar_reporte_estado():
+        reporte = {
+            "planificadas": 0,
+            "en_progreso": 0,
+            "pausadas": 0,
+            "completadas": 0
+        }
+
+        PARA CADA registro EN historial_cambios:
+            SI registro.estado_nuevo EN reporte:
+                reporte[registro.estado_nuevo] += 1
+
+        RETORNAR reporte
