@@ -1,3 +1,17 @@
+Función:
+-----
+Controlar y actualizar el estado de las tareas durante la ejecución del proyecto.
+-> Inputs:
+    ID de tarea
+    Nuevo estado de tarea
+    Horas trabajadas reales
+    Observaciones
+-> Outputs:
+    Estados actualizados de tareas
+    Registro de progreso
+    Alertas de seguimiento
+PSEUDOCODIGO:
+----------------
 CLASE RegistroProgreso:
     ATRIBUTOS:
         id_tarea: entero
