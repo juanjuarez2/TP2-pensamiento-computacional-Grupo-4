@@ -1,0 +1,61 @@
+CLASE Tarea:
+    ATRIBUTOS:
+        id_tarea: entero
+        nombre: cadena
+        descripcion: cadena
+        horas_estimadas: flotante
+        fecha_inicio: fecha
+        fecha_fin: fecha
+        responsable: cadena
+        estado: cadena = "planificada"
+
+CLASE PlanificadorTareas:
+    ATRIBUTOS:
+        lista_tareas: lista de Tarea
+        contador_id: entero = 1
+
+    FUNCIÓN crear_tarea(nombre, descripcion, horas, fecha_inicio, fecha_fin, responsable):
+        // Validaciones de entrada
+        SI nombre ES vacío O nombre no es cadena:
+            RETORNAR "Error: Nombre de tarea inválido"
+        
+        SI horas <= 0 O horas no es numérico:
+            RETORNAR "Error: Horas debe ser mayor a 0"
+        
+        SI fecha_inicio >= fecha_fin:
+            RETORNAR "Error: Fecha inicio debe ser anterior a fecha fin"
+        
+        SI responsable ES vacío:
+            RETORNAR "Error: Debe asignar un responsable"
+
+        // Crear nueva tarea
+        nueva_tarea = Tarea()
+        nueva_tarea.id_tarea = contador_id
+        nueva_tarea.nombre = nombre
+        nueva_tarea.descripcion = descripcion
+        nueva_tarea.horas_estimadas = horas
+        nueva_tarea.fecha_inicio = fecha_inicio
+        nueva_tarea.fecha_fin = fecha_fin
+        nueva_tarea.responsable = responsable
+
+        // Agregar a lista
+        lista_tareas.agregar(nueva_tarea)
+        contador_id = contador_id + 1
+        
+        RETORNAR "Tarea creada exitosamente"
+
+    FUNCIÓN obtener_plan_completo():
+        RETORNAR lista_tareas
+
+    FUNCIÓN buscar_tarea_por_id(id):
+        PARA CADA tarea EN lista_tareas:
+            SI tarea.id_tarea == id:
+                RETORNAR tarea
+        RETORNAR NULO
+  
+    FUNCIÓN eliminar_tarea_por_id(id):
+        PARA CADA tarea EN lista_tareas:
+            SI tarea.id_tarea == id:
+                lista_tareas.remover(tarea)
+                RETORNAR "Tarea eliminada exitosamente"
+        RETORNAR "Error: No se encontró una tarea con ese ID"
