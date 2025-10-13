@@ -350,6 +350,135 @@ P6 -- Escribe/Lee --> DS_L
 P6 -- Escribe --> DS_H
 ```
 
+### Notas
+Proceso 1.0: Planificar Proyecto
+Este proceso es el punto de partida para cualquier proyecto.
+
+Responsable: Gerente de Proyecto.
+
+Entrada de datos: El Gerente introduce los Datos Proyecto/Tareas, que incluyen el nombre, presupuesto, fechas planificadas del proyecto y los detalles de cada tarea (nombre, fechas estimadas, tiempo estimado).
+
+Acciones que realiza:
+
+Toma los datos del Gerente.
+
+Valida la coherencia de los datos (por ejemplo, que la fecha de fin sea posterior a la de inicio, como se especifica en el pseudocódigo).
+
+Escribe la información en los almacenes de datos.
+
+Salida de datos:
+
+Crea un nuevo registro en el almacén D1: Proyectos.
+
+Crea uno o varios registros asociados en el almacén D2: Tareas.
+
+Proceso 2.0: Asignar Recursos
+Una vez que el proyecto y sus tareas están definidos, este proceso se encarga de asignar el personal y las herramientas.
+
+Responsable: Gerente de Proyecto.
+
+Entrada de datos: El Gerente envía una Solicitud de Asignación (ej: "asignar a este usuario y esta licencia a tal tarea").
+
+Acciones que realiza:
+
+Lee los datos de las tareas (D2), usuarios (D3) y licencias (D4) para saber qué recursos están disponibles.
+
+Valida la disponibilidad de esos recursos (RF-015, RF-016). Esto es crucial: verifica si un usuario ya tiene conflictos de agenda o si una licencia ha alcanzado su cupo máximo.
+
+Si la validación es exitosa, escribe las nuevas asignaciones.
+
+Salida de datos:
+
+Crea nuevos registros en D5: Asignaciones Usuario y D6: Asignaciones Licencia, vinculando los recursos con las tareas.
+
+Envía información de Validación al proceso 4.0 Controlar Avances. Esto significa que al asignar un recurso con conflictos, el sistema podría generar una alerta de forma proactiva a través del proceso de control.
+
+Proceso 3.0: Ejecutar y Monitorear
+Este es el proceso del día a día, donde se registra el trabajo real.
+
+Responsable: Miembro de Equipo.
+
+Entrada de datos: El miembro del equipo introduce Horas y Avance (ej: "trabajé 4 horas en la tarea X y ahora está al 30%").
+
+Acciones que realiza:
+
+Lee de D5 para confirmar que el usuario está asignado a la tarea que reporta.
+
+Lee de D10: Historial Costos para saber qué costo por hora aplicar a esas horas trabajadas en esa fecha específica (RF-011).
+
+Escribe un nuevo registro en D7: Registros de Horas con las horas y el costo aplicado.
+
+Actualiza el porcentaje_avance en el registro correspondiente del almacén D2: Tareas.
+
+Salida de datos:
+
+Envía Datos Avance al proceso 4.0 Controlar Avances, informándole que el estado del proyecto ha cambiado y que las métricas deben ser recalculadas.
+
+Proceso 4.0: Controlar Avances
+Este es el cerebro analítico del sistema. No crea datos de proyecto, sino que los procesa para generar inteligencia.
+
+Responsable: Gerente de Proyecto.
+
+Entrada de datos: Recibe una Solicitud de Reporte del Gerente, y también recibe datos continuamente de los procesos P2 y P3.
+
+Acciones que realiza:
+
+Lee datos de múltiples almacenes:
+
+D1: Proyectos (para el presupuesto y fechas).
+
+D2: Tareas (para el avance y tiempos estimados).
+
+D7: Registros de Horas y D3: Usuarios (para calcular el costo real de las horas).
+
+D6: Asignaciones Licencia y D4: Licencias (para calcular el costo real de las licencias).
+
+Calcula las métricas clave: Costo Real (AC), Valor Ganado (EV), CPI y SPI (RF-022, RF-023, RF-024).
+
+Verifica si se cumplen las condiciones para generar alertas (ej: costo > 90% del presupuesto, como en RF-025). Si es así, escribe en D9: Alertas.
+
+Salida de datos:
+
+Genera un Informe que se muestra al Gerente de Proyecto.
+
+Proceso 5.0: Cerrar Proyecto
+Este proceso formaliza la finalización de un proyecto.
+
+Responsable: Gerente de Proyecto.
+
+Entrada de datos: El Gerente envía una Solicitud de Cierre.
+
+Acciones que realiza:
+
+Lee de D2: Tareas para verificar que todas están al 100% (RF-027). Si no, el proceso se detiene.
+
+Si todo está completo, lee de todos los almacenes de datos relevantes (D1, D7, D6, etc.) para hacer un cálculo final de costos, duración y métricas de desempeño.
+
+Escribe un registro permanente en D8: Informes Cierre (RF-029).
+
+Actualiza el estado en D1: Proyectos a "Cerrado" y registra la fecha de cierre real (RF-002).
+
+Salida de datos:
+
+Entrega un Reporte Final al Gerente de Proyecto.
+
+Proceso 6.0: Gestionar Maestros
+Este proceso es administrativo y se encarga de gestionar los datos base que el sistema utiliza en todos los proyectos.
+
+Responsable: Administrador.
+
+Entrada de datos: El Administrador introduce Gestión Usuarios/Licencias (ej: crear un nuevo usuario, cambiar el costo por hora de uno existente, añadir una nueva licencia).
+
+Acciones que realiza:
+
+Lee y Escribe directamente en los almacenes D3: Usuarios y D4: Licencias.
+
+Cuando se modifica el costo de un usuario, escribe un registro en D10: Historial Costos para mantener la trazabilidad de los cambios (RF-011).
+
+Salida de datos:
+
+No produce informes, simplemente mantiene la integridad de los datos maestros del sistema.
+
 ## creación de proyecto
 
 ```mermaid
