@@ -68,6 +68,9 @@ Desarrollar un prototipo de software para la gestión integral del ciclo de vida
 - **RF-027:** El sistema debe permitir cerrar un proyecto únicamente si todas sus tareas están al 100% de avance.
 - **RF-028:** El sistema debe generar un informe final que incluya: duración total real, costo total real (horas + licencias), desviaciones de presupuesto y cronograma, CPI, SPI, y horas totales trabajadas.
 - **RF-029:** El sistema debe almacenar permanentemente los informes de cierre para consulta histórica.
+
+## DER 
+
 ```mermaid
 erDiagram
     PROYECTO {
@@ -183,6 +186,7 @@ erDiagram
     USUARIO ||--|{ HISTORIAL_COSTO_USUARIO : "tiene historial"
 ```
 
+## Data Flow Diagram
 
 ```mermaid
 graph TD
@@ -346,6 +350,7 @@ P6 -- Escribe/Lee --> DS_L
 P6 -- Escribe --> DS_H
 ```
 
+## creación de proyecto
 
 ```mermaid
 stateDiagram-v2
@@ -396,6 +401,8 @@ Solo consulta
 
 end note
 ```
+
+## Diagramas de Estado
 
 ```mermaid
 stateDiagram-v2
@@ -477,7 +484,7 @@ sequenceDiagram
     SA-->>UI: asignacionExitosa
     UI-->>GP: confirmarAsignacion()
 ```
-
+## Diagrama de Sequencia para cierre de proyecto
 
 ```mermaid
 sequenceDiagram
